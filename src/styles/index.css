@@ -1,0 +1,130 @@
+@import 'tailwindcss';
+@import './fonts.css';
+
+/* Brand tokens — derived from the official logo (navy #0B3350, circuit blue #307CA4). */
+@theme {
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: 'Manrope Variable', 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+
+  --color-navy-950: #051a2a;
+  --color-navy-900: #082638;
+  --color-navy-800: #0b3350;
+  --color-navy-700: #134466;
+  --color-navy-600: #1d587f;
+
+  --color-brand-700: #1f5b7e;
+  --color-brand-600: #26688d;
+  --color-brand-500: #307ca4;
+  --color-brand-400: #4f97bf;
+  --color-brand-300: #86b9d6;
+  --color-brand-200: #bcd8e9;
+  --color-brand-100: #ddebf5;
+  --color-brand-50: #eef5fb;
+
+  --color-ice: #f5f9fc;
+  --color-ink: #0f2233;
+  --color-body: #44566a;
+  --color-muted: #66778a;
+  --color-line: #dde6ee;
+
+  --color-whatsapp: #128c4a;
+
+  --shadow-card: 0 1px 2px rgb(11 51 80 / 0.05), 0 8px 24px -12px rgb(11 51 80 / 0.12);
+  --shadow-lift: 0 2px 4px rgb(11 51 80 / 0.06), 0 22px 44px -20px rgb(11 51 80 / 0.28);
+
+  --animate-rise: rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-fade: fade 0.9s ease-out both;
+
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(18px); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes fade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: 6rem;
+  }
+  body {
+    @apply bg-white font-sans text-body antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  h1, h2, h3, h4 {
+    @apply font-display text-ink;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+  p { text-wrap: pretty; }
+  ::selection { background: var(--color-brand-100); color: var(--color-navy-800); }
+  :focus-visible {
+    outline: 2px solid var(--color-brand-500);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+}
+
+@layer components {
+  .container-x {
+    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+  .section-y {
+    @apply py-20 sm:py-24 lg:py-28;
+  }
+  .eyebrow {
+    @apply inline-flex items-center gap-2 text-xs font-semibold tracking-[0.16em] text-brand-600 uppercase;
+  }
+  .eyebrow::before {
+    content: '';
+    @apply h-px w-6 bg-brand-400;
+  }
+  .card {
+    @apply rounded-xl border border-line bg-white shadow-card;
+  }
+  .grid-bg {
+    background-image:
+      linear-gradient(to right, rgb(11 51 80 / 0.045) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(11 51 80 / 0.045) 1px, transparent 1px);
+    background-size: 44px 44px;
+  }
+  .prose-legal h2 { @apply mt-12 mb-4 text-xl font-bold sm:text-2xl; }
+  .prose-legal h3 { @apply mt-6 mb-2 text-base font-semibold; }
+  .prose-legal p { @apply mb-4 leading-relaxed; }
+  .prose-legal ul { @apply mb-4 list-disc space-y-2 pl-5 leading-relaxed marker:text-brand-400; }
+  .prose-legal a { @apply font-medium text-brand-600 underline underline-offset-2 [overflow-wrap:anywhere] hover:text-navy-800; }
+}
+
+/* Scroll reveal: content stays visible without JS; hidden only once JS has loaded. */
+.js .reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+.js .reveal[data-revealed='true'] {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+  }
+  .js .reveal { opacity: 1; transform: none; }
+}
+
+/* Process timeline connector drawing (hidden state only applies once JS has loaded). */
+.draw-line {
+  transition: transform 1.4s cubic-bezier(0.65, 0, 0.35, 1) 0.15s;
+}
+.js .draw-line.draw-x:not([data-on='true']) { transform: scaleX(0); }
+.js .draw-line.draw-y:not([data-on='true']) { transform: scaleY(0); }
