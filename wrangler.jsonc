@@ -1,0 +1,14 @@
+// Cloudflare Workers deployment: serves the prerendered static site in dist/.
+// Build command: npm run build   Deploy command: npx wrangler deploy
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "corpolance-website",
+  "compatibility_date": "2026-09-01",
+  "assets": {
+    "directory": "./dist",
+    // /about is served from about.html (or about/index.html) without a redirect.
+    "html_handling": "auto-trailing-slash",
+    // Unknown paths get dist/404.html with a 404 status.
+    "not_found_handling": "404-page"
+  }
+}

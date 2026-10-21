@@ -83,6 +83,8 @@ Automatic delivery of enquiries without the visitor pressing send would need a b
 
 ## Deployment
 
+**Cloudflare (Workers Builds):** `wrangler.jsonc` is included. Use build command `npm run build` and deploy command `npx wrangler deploy`. It serves `dist/` with clean URLs and returns `404.html` for unknown paths.
+
 The `dist/` folder is a plain static site. It works on Netlify, Vercel, Cloudflare Pages, GitHub Pages, S3/CloudFront, Apache or nginx.
 
 1. Set `VITE_SITE_URL` to the final domain (no trailing slash) if it isn't `https://www.corpolance.com`.
