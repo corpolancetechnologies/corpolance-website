@@ -4,9 +4,22 @@ import { renderToString } from 'react-dom/server'
 import { StaticRouter } from 'react-router'
 import App from './App'
 import { SITE } from './config/site'
-import { PAGES, renderHead, type PageMeta } from './lib/seo'
+import { PAGES, SERVICE_PAGES, renderHead, type PageMeta } from './lib/seo'
 
-export const ROUTES: PageMeta[] = [PAGES.home, PAGES.about, PAGES.services, PAGES.contact, PAGES.privacy]
+export const ROUTES: PageMeta[] = [
+  PAGES.home,
+  PAGES.services,
+  ...SERVICE_PAGES,
+  PAGES.professional,
+  PAGES.agency,
+  PAGES.hire,
+  PAGES.howWeWork,
+  PAGES.about,
+  PAGES.missionVision,
+  PAGES.faq,
+  PAGES.contact,
+  PAGES.privacy,
+]
 export const NOT_FOUND: PageMeta = PAGES.notFound
 export const SITE_URL = SITE.url
 

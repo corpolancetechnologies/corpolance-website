@@ -29,12 +29,23 @@ npm run preview    # serve dist/ at http://localhost:4173
 
 | Route | Page |
 | --- | --- |
-| `/` | Home: hero, stats, engagement models, services grid, 4-step process, why choose us, global delivery, FAQ, final CTA |
-| `/about` | Story, what we do / who we serve, expertise, delivery approach, values, confidentiality commitment |
-| `/services` | Engagement-model comparison, detailed B2B / B2C / freelance sections, 10 service categories with sticky in-page navigation |
-| `/contact` | Enquiry form → WhatsApp (or email), direct WhatsApp, other contact details |
+| `/` | Home: hero, stats, who we help, grouped services, process, why us, challenges we support, delivery approach, FAQ preview, CTA |
+| `/services` | Services overview: ten specializations in three groups, engagement models, comparison, process |
+| `/services/<slug>` | Ten dedicated service pages from one template (`src/pages/ServicePage.tsx`, content in `src/data/services.ts`) |
+| `/professional-technical-support` | Individual technical support (B2C) |
+| `/agency-partnerships` | Agency partnerships (B2B), with an agency enquiry form |
+| `/hire-it-resources` | Freelance IT resources for organizations, with an enquiry form |
+| `/how-we-work` | The four-stage engagement process in detail |
+| `/about` | Company story, approach, values, global delivery |
+| `/mission-vision` | Mission, vision and values |
+| `/faq` | Categorised FAQ (also emitted as FAQPage structured data) |
+| `/contact` | Enquiry form → WhatsApp (or email), direct WhatsApp |
 | `/privacy-policy` | Privacy Policy |
 | anything else | 404 page |
+
+Service slugs: `software-development`, `software-testing-qa`, `data-engineering`, `data-analytics-bi`, `data-science-machine-learning`, `ai-development`, `sap-enterprise-technologies`, `mainframe-support`, `database-development`, `cloud-services`.
+
+The header uses three dropdowns (Services, Who We Help, About). Navigation data lives in `src/data/navigation.ts`.
 
 ## Project structure
 
@@ -97,7 +108,8 @@ The `dist/` folder is a plain static site. It works on Netlify, Vercel, Cloudfla
 
 - **Canonical domain:** confirmed as `https://www.corpolance.com` (the default). Point the apex `corpolance.com` to it with a permanent redirect at the host.
 - **Privacy Policy.** Items marked "Owner to verify" appear only in `npm run dev`, never in production. They cover: legal entity name/address, hosting and analytics, confidentiality agreements with network professionals, tools used, retention period and security measures, and applicable law (e.g. India DPDP Act 2023, GDPR). The "Last updated" date is in `src/pages/PrivacyPolicy.tsx`. Legal review is recommended.
-- **Testimonials:** intentionally omitted for now. The section stays hidden until genuine, approved entries are added to `TESTIMONIALS` in `src/data/content.ts`.
+- **Testimonials:** the site intentionally has no testimonials, reviews or ratings.
+- **Technology names on service pages.** Each service page lists example tools (in `src/data/services.ts`). Confirm they reflect skills genuinely available in your network, especially SAP (ABAP), mainframe (COBOL, JCL, DB2, CICS, z/OS) and the database and cloud product examples.
 - **Analytics.** The previous site used Google Analytics. None is included here. If you add it, update the Privacy Policy and add consent handling where required.
 - **Contact details.** WhatsApp `+91 72057 06992`, email `corpolancetechnologies@gmail.com` and LinkedIn `linkedin.com/company/corpolance-technologies` are taken from the existing public website.
 

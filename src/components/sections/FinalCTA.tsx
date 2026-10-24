@@ -6,11 +6,20 @@ import { WhatsAppButton } from '../common/WhatsAppButton'
 interface FinalCTAProps {
   title?: string
   text?: string
+  primaryLabel?: string
+  primaryTo?: string
+  /** Adds an "Explore Our Services" button */
+  showServices?: boolean
+  whatsappLabel?: string
 }
 
 export function FinalCTA({
   title = "Let's Find the Right Technical Support for Your Requirement.",
   text = "Share your technical challenge, project requirement, or resource needs with our team. We'll discuss your objectives and help you understand the next steps.",
+  primaryLabel = 'Contact Our Team',
+  primaryTo = '/contact',
+  showServices = false,
+  whatsappLabel = 'Chat on WhatsApp',
 }: FinalCTAProps) {
   return (
     <section aria-labelledby="cta-title" className="bg-white pb-20 sm:pb-24 lg:pb-28">
@@ -34,12 +43,17 @@ export function FinalCTA({
                 </h2>
                 <p className="mt-5 max-w-2xl text-base leading-relaxed text-brand-100/85 sm:text-lg">{text}</p>
               </div>
-              <div className="flex flex-col gap-3 sm:flex-row lg:flex-col lg:items-end">
-                <ButtonLink to="/contact" variant="light" size="lg" className="lg:w-72">
-                  Contact Our Team
+              <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap lg:flex-col lg:items-end">
+                <ButtonLink to={primaryTo} variant="light" size="lg" className="lg:w-72">
+                  {primaryLabel}
                   <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
                 </ButtonLink>
-                <WhatsAppButton variant="outline-light" size="lg" label="Chat on WhatsApp" className="lg:w-72" />
+                {showServices && (
+                  <ButtonLink to="/services" variant="outline-light" size="lg" className="lg:w-72">
+                    Explore Our Services
+                  </ButtonLink>
+                )}
+                <WhatsAppButton variant="outline-light" size="lg" label={whatsappLabel} className="lg:w-72" />
               </div>
             </div>
           </div>

@@ -1,7 +1,7 @@
 import { Link } from 'react-router'
 import { Linkedin, Mail } from 'lucide-react'
 import { SITE } from '../../config/site'
-import { FOOTER_ENGAGEMENT_LINKS, FOOTER_SERVICE_LINKS, MAIN_NAV } from '../../data/navigation'
+import { FOOTER_AUDIENCE_LINKS, FOOTER_COMPANY_LINKS, FOOTER_SERVICE_LINKS } from '../../data/navigation'
 import { buildWhatsAppUrl } from '../../lib/whatsapp'
 import { WhatsAppIcon } from '../common/WhatsAppButton'
 
@@ -41,9 +41,9 @@ export function Footer() {
           </div>
 
           <div className="grid grid-cols-2 gap-10 sm:grid-cols-3 lg:col-span-5">
-            <FooterColumn title="Company" links={[...MAIN_NAV, { label: 'Privacy Policy', to: '/privacy-policy' }]} />
+            <FooterColumn title="Company" links={FOOTER_COMPANY_LINKS} />
             <FooterColumn title="Services" links={FOOTER_SERVICE_LINKS} />
-            <FooterColumn title="Engagements" links={FOOTER_ENGAGEMENT_LINKS} />
+            <FooterColumn title="Who We Help" links={FOOTER_AUDIENCE_LINKS} />
           </div>
 
           <div className="lg:col-span-4 lg:pl-6">

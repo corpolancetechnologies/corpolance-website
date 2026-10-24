@@ -2,7 +2,7 @@ import { Link } from 'react-router'
 import { ArrowRight, Compass, Eye, Handshake, Lock, MessagesSquare, Target } from 'lucide-react'
 import { SITE } from '../config/site'
 import { ENGAGEMENT_MODELS } from '../data/content'
-import { SERVICES, contactHref } from '../data/services'
+import { SERVICES, contactHref, servicePath } from '../data/services'
 import { PAGES, useSeo } from '../lib/seo'
 import { ButtonLink } from '../components/common/Button'
 import { Reveal } from '../components/common/Reveal'
@@ -11,6 +11,7 @@ import { WhatsAppButton } from '../components/common/WhatsAppButton'
 import { PageHero } from '../components/sections/PageHero'
 import { StatsSection } from '../components/sections/StatsSection'
 import { FinalCTA } from '../components/sections/FinalCTA'
+import { GlobalDelivery } from '../components/sections/GlobalDelivery'
 
 const values = [
   { icon: Target, title: 'Requirement first', text: 'We take time to understand the actual problem before proposing anyone.' },
@@ -104,7 +105,7 @@ export default function About() {
                     <h3 className="mt-5 text-xl font-bold">{m.title}</h3>
                     <p className="mt-1 text-sm font-medium text-brand-600">{m.audience}</p>
                     <p className="mt-4 text-sm leading-relaxed">{m.summary}</p>
-                    <ButtonLink to={`/services#${m.anchor}`} variant="ghost" className="mt-auto self-start pt-5">
+                    <ButtonLink to={m.path} variant="ghost" className="mt-auto self-start pt-5">
                       How it works <ArrowRight className="size-4" aria-hidden="true" />
                     </ButtonLink>
                   </article>
@@ -130,7 +131,7 @@ export default function About() {
               return (
                 <li key={s.id}>
                   <Link
-                    to={`/services#${s.id}`}
+                    to={servicePath(s.id)}
                     className="flex min-h-14 items-center gap-3 rounded-lg border border-line bg-white px-4 py-3 text-sm font-semibold text-ink transition-colors hover:border-brand-200 hover:text-brand-600"
                   >
                     <Icon className="size-4.5 shrink-0 text-brand-500" aria-hidden="true" />
@@ -167,7 +168,12 @@ export default function About() {
       {/* Values */}
       <section aria-labelledby="values-title" className="section-y bg-ice">
         <div className="container-x">
-          <SectionHeading id="values-title" eyebrow="Our values" title="What guides how we work" />
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+            <SectionHeading id="values-title" eyebrow="Our values" title="What guides how we work" />
+            <ButtonLink to="/mission-vision" variant="secondary" className="self-start lg:self-auto">
+              Read our mission & vision <ArrowRight className="size-4" aria-hidden="true" />
+            </ButtonLink>
+          </div>
           <ul className="mt-14 grid gap-x-10 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
             {values.map(({ icon: Icon, title, text }, i) => (
               <Reveal as="li" key={title} delay={(i % 3) * 80} className="flex gap-4">
@@ -208,6 +214,8 @@ export default function About() {
           </div>
         </div>
       </section>
+
+      <GlobalDelivery />
 
       <FinalCTA />
     </>

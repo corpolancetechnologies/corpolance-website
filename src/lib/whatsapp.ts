@@ -23,6 +23,7 @@ export interface EnquiryValues {
   meetingTime?: string
   organization?: string
   engagement?: string
+  resourceNeed?: string
 }
 
 const DEFAULT_GREETING = `Hello ${SITE.name},\nI would like to discuss a requirement.`
@@ -40,6 +41,7 @@ export function buildEnquiryMessage(values: EnquiryValues): string {
     line('Organization', values.organization),
     line('Technology/Service', values.service),
     line('Engagement Preference', values.engagement),
+    line('Resource Requirement', values.resourceNeed),
     line('Preferred Meeting Time / Time Zone', values.meetingTime),
   ].filter(Boolean)
 

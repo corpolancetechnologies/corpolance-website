@@ -1,19 +1,18 @@
-import { useId, useState } from 'react'
-import { Link } from 'react-router'
+import { useId, useState, type ReactNode } from 'react'
 import { AnimatePresence, m } from 'framer-motion'
 import { Plus } from 'lucide-react'
-import { FAQS, type Faq } from '../../data/content'
+import type { Faq } from '../../data/content'
 import { cn } from '../../lib/cn'
 import { SectionHeading } from '../common/SectionHeading'
-import { WhatsAppButton } from '../common/WhatsAppButton'
 
-function FaqItem({ faq, open, onToggle }: { faq: Faq; open: boolean; onToggle: () => void }) {
+function FaqItem({ faq, open, onToggle, headingLevel }: { faq: Faq; open: boolean; onToggle: () => void; headingLevel: 3 | 4 }) {
   const id = useId()
   const buttonId = `${id}-q`
   const panelId = `${id}-a`
+  const Heading = headingLevel === 3 ? 'h3' : 'h4'
   return (
     <div className="border-b border-line">
-      <h3 className="text-base">
+      <Heading className="text-base">
         <button
           id={buttonId}
           type="button"
@@ -33,7 +32,7 @@ function FaqItem({ faq, open, onToggle }: { faq: Faq; open: boolean; onToggle: (
             <Plus className="size-4" />
           </span>
         </button>
-      </h3>
+      </Heading>
       <AnimatePresence initial={false}>
         {open && (
           <m.div
@@ -54,30 +53,42 @@ function FaqItem({ faq, open, onToggle }: { faq: Faq; open: boolean; onToggle: (
   )
 }
 
-export function FAQAccordion({ items = FAQS }: { items?: Faq[] }) {
-  const [open, setOpen] = useState<number | null>(0)
+/** Accessible accordion list; one item open at a time. */
+export function FaqList({ items, firstOpen = true, headingLevel = 3 }: { items: Faq[]; firstOpen?: boolean; headingLevel?: 3 | 4 }) {
+  const [open, setOpen] = useState<number | null>(firstOpen ? 0 : null)
   return (
-    <section aria-labelledby="faq-title" className="section-y bg-white">
+    <div className="border-t border-line">
+      {items.map((f, i) => (
+        <FaqItem key={f.q} faq={f} headingLevel={headingLevel} open={open === i} onToggle={() => setOpen(open === i ? null : i)} />
+      ))}
+    </div>
+  )
+}
+
+interface FAQAccordionProps {
+  items: Faq[]
+  title?: string
+  description?: string
+  /** Extra content under the heading, e.g. CTA links */
+  aside?: ReactNode
+  className?: string
+}
+
+export function FAQAccordion({
+  items,
+  title = 'Frequently asked questions',
+  description = "Straight answers about how we work. If your question isn't here, our team is happy to help.",
+  aside,
+  className = 'bg-white',
+}: FAQAccordionProps) {
+  return (
+    <section aria-labelledby="faq-title" className={cn('section-y', className)}>
       <div className="container-x grid gap-12 lg:grid-cols-[0.75fr_1.25fr] lg:gap-20">
         <div>
-          <SectionHeading
-            id="faq-title"
-            eyebrow="FAQ"
-            title="Frequently asked questions"
-            description="Straight answers about how we work. If your question isn't here, our team is happy to help."
-          />
-          <div className="mt-8 flex flex-wrap gap-3">
-            <WhatsAppButton label="Ask on WhatsApp" />
-            <Link to="/contact" className="inline-flex min-h-11 items-center px-2 text-sm font-semibold text-brand-600 hover:text-navy-800">
-              Send an enquiry
-            </Link>
-          </div>
+          <SectionHeading id="faq-title" eyebrow="FAQ" title={title} description={description} />
+          {aside && <div className="mt-8 flex flex-wrap gap-3">{aside}</div>}
         </div>
-        <div className="border-t border-line">
-          {items.map((f, i) => (
-            <FaqItem key={f.q} faq={f} open={open === i} onToggle={() => setOpen(open === i ? null : i)} />
-          ))}
-        </div>
+        <FaqList items={items} />
       </div>
     </section>
   )

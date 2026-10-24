@@ -26,6 +26,7 @@ const EMPTY: Values = {
   meetingTime: '',
   organization: '',
   engagement: '',
+  resourceNeed: '',
 }
 
 const ENGAGEMENT_OPTIONS = ['Project-based', 'Ongoing / long-term', 'Not sure yet']
@@ -103,10 +104,15 @@ const inputClass = (invalid?: boolean) =>
 
 /* ---------- form ---------- */
 
-export function ContactForm() {
+interface ContactFormProps {
+  /** Fix the enquiry type (hides the type selector), e.g. on audience pages */
+  fixedType?: EnquiryTypeId
+}
+
+export function ContactForm({ fixedType }: ContactFormProps = {}) {
   const uid = useId()
   const [params] = useSearchParams()
-  const [values, setValues] = useState<Values>(EMPTY)
+  const [values, setValues] = useState<Values>(() => ({ ...EMPTY, enquiryType: fixedType ?? '' }))
   const [errors, setErrors] = useState<Errors>({})
   const [submittedUrl, setSubmittedUrl] = useState<string | null>(null)
   // Incremented on each submit attempt so focus moves to the summary or status message.
@@ -120,10 +126,10 @@ export function ContactForm() {
     const service = serviceById(params.get('service'))
     setValues((v) => ({
       ...v,
-      enquiryType: ENQUIRY_TYPES.some((t) => t.id === type) ? (type as EnquiryTypeId) : v.enquiryType,
+      enquiryType: !fixedType && ENQUIRY_TYPES.some((t) => t.id === type) ? (type as EnquiryTypeId) : v.enquiryType,
       service: service ? service.shortTitle : v.service,
     }))
-  }, [params])
+  }, [params, fixedType])
 
   const set = <K extends keyof Values>(key: K, value: Values[K]) => {
     setValues((v) => ({ ...v, [key]: value }))
@@ -131,14 +137,17 @@ export function ContactForm() {
     setSubmittedUrl(null)
   }
 
-  const showOrganization = values.enquiryType === 'agency' || values.enquiryType === 'organization'
-  const showEngagement = values.enquiryType === 'organization'
+  const isAgency = values.enquiryType === 'agency'
+  const showOrganization = isAgency || values.enquiryType === 'organization'
+  const showEngagement = showOrganization
+  const showResourceNeed = showOrganization
 
   // Drop conditional values that no longer apply.
   const payload = (): Values => ({
     ...values,
     organization: showOrganization ? values.organization : '',
     engagement: showEngagement ? values.engagement : '',
+    resourceNeed: showResourceNeed ? values.resourceNeed : '',
   })
 
   useEffect(() => {
@@ -198,7 +207,7 @@ export function ContactForm() {
       )}
 
       <div className="grid gap-5 sm:grid-cols-2">
-        <Field id={fid('fullName')} label="Full name" required error={errors.fullName}>
+        <Field id={fid('fullName')} label={isAgency ? 'Contact person' : 'Full name'} required error={errors.fullName}>
           {(d) => (
             <input
               id={fid('fullName')}
@@ -213,7 +222,7 @@ export function ContactForm() {
             />
           )}
         </Field>
-        <Field id={fid('email')} label="Email address" required error={errors.email}>
+        <Field id={fid('email')} label={showOrganization ? 'Business email' : 'Email address'} required error={errors.email}>
           {(d) => (
             <input
               id={fid('email')}
@@ -265,6 +274,7 @@ export function ContactForm() {
         </Field>
       </div>
 
+      {!fixedType && (
       <fieldset>
         <legend className="text-sm font-semibold text-ink">
           Enquiry type
@@ -308,11 +318,12 @@ export function ContactForm() {
           </p>
         )}
       </fieldset>
+      )}
 
       {(showOrganization || showEngagement) && (
         <div className="grid gap-5 sm:grid-cols-2">
           {showOrganization && (
-            <Field id={fid('organization')} label={values.enquiryType === 'agency' ? 'Agency / company name' : 'Organization name'}>
+            <Field id={fid('organization')} label={isAgency ? 'Agency name' : 'Organization name'}>
               {(d) => (
                 <input
                   id={fid('organization')}
@@ -327,7 +338,7 @@ export function ContactForm() {
             </Field>
           )}
           {showEngagement && (
-            <Field id={fid('engagement')} label="Engagement preference">
+            <Field id={fid('engagement')} label={isAgency ? 'Expected engagement type' : 'Engagement preference'}>
               {(d) => (
                 <select
                   id={fid('engagement')}
@@ -345,11 +356,30 @@ export function ContactForm() {
               )}
             </Field>
           )}
+          {showResourceNeed && (
+            <Field
+              id={fid('resourceNeed')}
+              label="Indicative resource requirement"
+              hint="e.g. 1 data engineer for about 3 months."
+              className="sm:col-span-2"
+            >
+              {(d) => (
+                <input
+                  id={fid('resourceNeed')}
+                  name="resourceNeed"
+                  value={values.resourceNeed}
+                  onChange={(e) => set('resourceNeed', e.target.value)}
+                  aria-describedby={d}
+                  className={inputClass()}
+                />
+              )}
+            </Field>
+          )}
         </div>
       )}
 
       <div className="grid gap-5 sm:grid-cols-2">
-        <Field id={fid('service')} label="Required technology or service" required error={errors.service}>
+        <Field id={fid('service')} label={showOrganization ? 'Required skill area' : 'Required technology or service'} required error={errors.service}>
           {(d) => (
             <select
               id={fid('service')}
@@ -384,7 +414,7 @@ export function ContactForm() {
 
       <Field
         id={fid('requirement')}
-        label="Requirement description"
+        label={isAgency ? 'Brief project or partnership description' : 'Requirement description'}
         required
         error={errors.requirement}
         hint="Technologies involved, what you need help with, expected timeline and any experience requirements."

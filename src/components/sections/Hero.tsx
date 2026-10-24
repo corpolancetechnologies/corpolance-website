@@ -23,8 +23,8 @@ export function Hero() {
             <span className="text-brand-600">When Your Business Needs It.</span>
           </h1>
           <p className="mt-6 max-w-xl text-base leading-relaxed text-body sm:text-lg">
-            Corpolance Technologies connects organizations, agencies, and working professionals with skilled
-            technical resources and personalized technical assistance across a wide range of technologies.
+            Corpolance Technologies connects agencies, organizations, and working professionals with relevant technical
+            expertise across software development, data, AI, cloud, and enterprise technologies.
           </p>
 
           <div className="mt-8 flex animate-rise flex-col gap-3 [animation-delay:120ms] sm:flex-row sm:flex-wrap">

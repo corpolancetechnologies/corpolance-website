@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { SITE } from '../config/site'
-import { FAQS } from '../data/content'
-import { SERVICES } from '../data/services'
+import { ALL_FAQS } from '../data/content'
+import { SERVICES, servicePath, type Service } from '../data/services'
 
 export interface PageMeta {
   path: string
@@ -9,6 +9,8 @@ export interface PageMeta {
   description: string
   /** Breadcrumb label for inner pages */
   breadcrumb?: string
+  /** Intermediate breadcrumb level, e.g. Our Services */
+  parent?: { name: string; path: string }
   noindex?: boolean
 }
 
@@ -25,6 +27,48 @@ export const PAGES = {
     description:
       'Established in India in 2023, Corpolance Technologies connects technical expertise with the requirements of individual professionals, agencies and organizations worldwide.',
     breadcrumb: 'About',
+  },
+  missionVision: {
+    path: '/mission-vision',
+    title: 'Our Mission & Vision | Corpolance Technologies',
+    description:
+      "Discover Corpolance Technologies' mission, vision and values — requirement-first technical support, IT resource staffing and B2B technology partnerships for clients in India and worldwide.",
+    breadcrumb: 'Mission & Vision',
+  },
+  professional: {
+    path: '/professional-technical-support',
+    title: 'Professional Technical Support | Corpolance Technologies',
+    description:
+      'Requirement-focused technical assistance for working professionals — development, debugging, data, cloud, databases, AI and testing — from specialists matched to your technology stack.',
+    breadcrumb: 'Professional Technical Support',
+  },
+  agency: {
+    path: '/agency-partnerships',
+    title: 'IT Resource Partnerships for Agencies | Corpolance Technologies',
+    description:
+      'A technical resource partner for agencies: address skill gaps, extend delivery capacity and support client engagements with professionals you evaluate before allocation.',
+    breadcrumb: 'Agency Partnerships',
+  },
+  hire: {
+    path: '/hire-it-resources',
+    title: 'Hire Freelance IT Resources | Corpolance Technologies',
+    description:
+      'Explore freelance and contract IT professionals — developers, testers, data, AI, cloud, database, SAP and mainframe specialists — matched to your project and evaluated before allocation.',
+    breadcrumb: 'Hire IT Resources',
+  },
+  howWeWork: {
+    path: '/how-we-work',
+    title: 'How We Work | Corpolance Technologies',
+    description:
+      'Our four-stage process: requirement discovery, specialist matching, technical evaluation and allocation — so you can assess a professional before any engagement begins.',
+    breadcrumb: 'How We Work',
+  },
+  faq: {
+    path: '/faq',
+    title: 'Frequently Asked Questions | Corpolance Technologies',
+    description:
+      'Answers about Corpolance Technologies: our services, individual technical support, agency partnerships, freelance IT resources and how engagements work.',
+    breadcrumb: 'FAQ',
   },
   services: {
     path: '/services',
@@ -87,18 +131,31 @@ export function structuredData(meta: PageMeta): object[] {
     { '@type': 'WebSite', '@id': `${SITE.url}/#website`, url: `${SITE.url}/`, name: SITE.name, publisher: { '@id': `${SITE.url}/#organization` } },
   ]
   if (meta.breadcrumb) {
+    const trail = [
+      { name: 'Home', path: '/' },
+      ...(meta.parent ? [meta.parent] : []),
+      { name: meta.breadcrumb, path: meta.path },
+    ]
     graph.push({
       '@type': 'BreadcrumbList',
-      itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'Home', item: absoluteUrl('/') },
-        { '@type': 'ListItem', position: 2, name: meta.breadcrumb, item: absoluteUrl(meta.path) },
-      ],
+      itemListElement: trail.map((t, i) => ({ '@type': 'ListItem', position: i + 1, name: t.name, item: absoluteUrl(t.path) })),
     })
   }
-  if (meta.path === '/') {
+  if (meta.path === '/faq') {
     graph.push({
       '@type': 'FAQPage',
-      mainEntity: FAQS.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+      mainEntity: ALL_FAQS.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+    })
+  }
+  const service = SERVICES.find((s) => servicePath(s.id) === meta.path)
+  if (service) {
+    graph.push({
+      '@type': 'Service',
+      name: service.title,
+      serviceType: service.title,
+      description: service.intro,
+      url: absoluteUrl(meta.path),
+      provider: { '@id': `${SITE.url}/#organization` },
     })
   }
   if (meta.path === '/services') {
@@ -111,8 +168,8 @@ export function structuredData(meta: PageMeta): object[] {
         item: {
           '@type': 'Service',
           name: s.title,
-          description: s.overview,
-          url: absoluteUrl(`/services#${s.id}`),
+          description: s.summary,
+          url: absoluteUrl(servicePath(s.id)),
           provider: { '@id': `${SITE.url}/#organization` },
         },
       })),
@@ -120,6 +177,18 @@ export function structuredData(meta: PageMeta): object[] {
   }
   return [{ '@context': 'https://schema.org', '@graph': graph }]
 }
+
+export function servicePageMeta(service: Service): PageMeta {
+  return {
+    path: servicePath(service.id),
+    title: service.seoTitle,
+    description: service.seoDescription,
+    breadcrumb: service.title,
+    parent: { name: 'Our Services', path: '/services' },
+  }
+}
+
+export const SERVICE_PAGES: PageMeta[] = SERVICES.map(servicePageMeta)
 
 const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 
